@@ -81,11 +81,9 @@
       }
 
       .button_container {
-        text-align: center;
         margin: 2rem 0;
       }
       .button_container a {
-        padding: 0.5rem 2rem;
         font-size: 16px;
         font-weight: 400;
       }

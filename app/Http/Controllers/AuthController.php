@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ForgottenPassword;
 use App\Mail\PortfolioMail;
 use App\Mail\VerificationMail;
 use App\Models\Language;
@@ -11,6 +12,7 @@ use App\Models\User;
 use App\Models\WorkInformation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -63,7 +65,7 @@ class AuthController extends Controller
 $mail=new VerificationMail($user);
     $mail->from('alexisnathan888@gmail.com', 'Nathan');
     Mail::to($request->email)->send($mail);
-    return response()->json(["message" => 'Registered successfully, go and verify your email address','user'=>false], 200);
+    return response()->json(["message" => 'Registered successfully, go and verify your email address','error'=>false], 200);
   }
 
   // Verify user email
@@ -227,8 +229,80 @@ $mail=new PortfolioMail($user);
     }
   }
 
-  public function testing(){
-      return response()->json(['message' => 'This the testing area', 'error' => false]);
-  
-  }
+  //Sending the user's verification number
+    public function forgottenPassword(Request $request)
+    {
+        // Validation and user existence check
+        $validatedData = $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+   if ($validatedData) {
+         // Generate random number
+        $randomNumber = mt_rand(1000, 9999);
+
+        // we save it in the cache
+       Cache::put('random_number_data', ['number' => $randomNumber, 'email' => $validatedData['email']], 300);
+
+//Getting the owner of the email
+$user=User::where('email',$validatedData['email'])->first();
+
+        // Send email with random number
+    $information=['name'=>$user->firstName, 'number'=>$randomNumber];
+$mail=new ForgottenPassword($information);
+    $mail->from('alexisnathan888@gmail.com', 'Nathan');
+       Mail::to($validatedData['email'])->send($mail);
+
+        return response()->json(['message' => 'Some codes have been sent to your email','error'=>false],200);
+   } else {
+        return response()->json(['message' => "You don't have an account",'error'=>true],404);
+   }
+   
+    }
+
+  //Verifying the user's code
+    public function verifyCode(Request $request)
+    {
+        // Retrieving the saved data from the cache
+       $cacheData = Cache::get('random_number_data');
+
+   if ($cacheData !== null) {
+$randomNumber = $cacheData['number'];
+    $email = $cacheData['email'];
+    Cache::put('email', $email, 3600);
+    if ($randomNumber==$request['number']) {
+        return response()->json(['message' => 'Your code has been verified','error'=>false],200);
+    } else {
+        return response()->json(['message' => "Your provided code doesn't match",'error'=>true],404);
+    }
+   } else {
+        return response()->json(['message' => "Your code has expired",'error'=>true],404);
+   }
+   
+    }
+
+
+  //Verifying the user's code
+    public function getNewPassword(Request $request)
+    {
+        // Retrieving the saved data from the cache
+       $email = Cache::get('email');
+
+        // Checking whether it has expired or not
+   if ($email !== null) {
+    $user = User::where('email', $email)->first();
+    if (!empty($user)) {
+        $user->update([
+        'password' => Hash::make($request['password'])
+      ]);
+      return response()->json(['message' => 'Your password updated successfully', 'error' => false],200);
+    } else {
+        return response()->json(['message' => "You don't have an account",'error'=>true],404);
+    }
+   } else {
+        return response()->json(['message' => "Your time elapsed in an hour",'error'=>true],404);
+   }
+   
+    }
+
 }

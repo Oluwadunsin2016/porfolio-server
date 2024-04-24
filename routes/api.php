@@ -29,10 +29,12 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::group(['middleware' => 'cors'], function () {
+Route::group(['middleware' => ['cors']], function () {
 Route::post('register',[AuthController::class,'register']);
 Route::post('login',[AuthController::class,'login']);
-Route::get('testing',[AuthController::class,'testing']);
+Route::post('forgottenPassword',[AuthController::class,'forgottenPassword']);
+Route::post('verifyCode',[AuthController::class,'verifyCode']);
+Route::post('getNewPassword',[AuthController::class,'getNewPassword']);
 Route::get('getCurrentUser/{token}',[AuthController::class,'getCurrentUser']);
 Route::post('verifyEmail/{token}',[AuthController::class,'verify']);
 Route::get('getWorkInformation/{token}',[WorkInformationController::class,'getWorkInformation']);
