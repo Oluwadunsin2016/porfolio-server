@@ -148,6 +148,14 @@ $mail=new PortfolioMail($user);
     if (!$user) {
       return response()->json(['message' => 'User not found', 'error' => true], 404);
     }
+
+   // Ensure the directory exists
+    $directory = storage_path('app/public/ProfileImages');
+    if (!file_exists($directory)) {
+        // Create the directory if it doesn't exist
+        mkdir($directory, 0777, true);
+    }
+
     if ($user->profileImage) {
       unlink(storage_path('app/public/ProfileImages/' . $user->profileImage));
     }
