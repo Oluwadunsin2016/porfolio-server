@@ -11,6 +11,7 @@ use App\Models\SocialInformation;
 use App\Models\User;
 use App\Models\WorkInformation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
@@ -311,6 +312,19 @@ $randomNumber = $cacheData['number'];
         return response()->json(['message' => "Your time elapsed in an hour",'error'=>true],404);
    }
    
+    }
+
+
+    public function createStorageLink(){
+       try {
+            // Run the storage:link command
+            Artisan::call('storage:link');
+            
+            return response()->json(['message' => 'Storage link created successfully.']);
+        } catch (\Exception $e) {
+            // Handle any exceptions
+            return response()->json(['error' => 'Failed to create storage link.', 'details' => $e->getMessage()], 500);
+        }
     }
 
 }

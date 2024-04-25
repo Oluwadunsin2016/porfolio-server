@@ -33,6 +33,7 @@ Route::group(['middleware' => ['cors']], function () {
 Route::post('register',[AuthController::class,'register']);
 Route::post('login',[AuthController::class,'login']);
 Route::post('forgottenPassword',[AuthController::class,'forgottenPassword']);
+Route::get('createStorageLink',[AuthController::class,'createStorageLink']);
 Route::post('verifyCode',[AuthController::class,'verifyCode']);
 Route::post('getNewPassword',[AuthController::class,'getNewPassword']);
 Route::get('getCurrentUser/{token}',[AuthController::class,'getCurrentUser']);
