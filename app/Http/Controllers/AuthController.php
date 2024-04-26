@@ -10,6 +10,7 @@ use App\Models\Project;
 use App\Models\SocialInformation;
 use App\Models\User;
 use App\Models\WorkInformation;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
@@ -156,6 +157,8 @@ $mail=new PortfolioMail($user);
         // Create the directory if it doesn't exist
         mkdir($directory, 0777, true);
     }
+
+Cloudinary::upload($request['profileImage']('file')->getRealPath())->getSecurePath();
 
     if ($user->profileImage) {
       unlink(storage_path('app/public/ProfileImages/' . $user->profileImage));
