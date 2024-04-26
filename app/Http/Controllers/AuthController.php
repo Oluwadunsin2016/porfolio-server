@@ -151,26 +151,30 @@ $mail=new PortfolioMail($user);
       return response()->json(['message' => 'User not found', 'error' => true], 404);
     }
 
-   // Ensure the directory exists
-    $directory = storage_path('app/public/ProfileImages');
-    if (!file_exists($directory)) {
-        // Create the directory if it doesn't exist
-        mkdir($directory, 0777, true);
-    }
+  //  // Ensure the directory exists
+  //   $directory = storage_path('app/public/ProfileImages');
+  //   if (!file_exists($directory)) {
+  //       // Create the directory if it doesn't exist
+  //       mkdir($directory, 0777, true);
+  //   }
 
-Cloudinary::upload($request['profileImage']('file')->getRealPath())->getSecurePath();
-
-    if ($user->profileImage) {
-      unlink(storage_path('app/public/ProfileImages/' . $user->profileImage));
-    }
-    $generated_name = time() . '.' . explode('/', explode(':', substr($request['profileImage'], 0, strpos($request['profileImage'], ';')))[1])[1];
-
-    $manager = new ImageManager(new Driver());
-    $manager->read($request['profileImage'])->save(storage_path('app/public/ProfileImages/' . $generated_name));
+$url=Cloudinary::upload($request['profileImage']->getRealPath(),['folder'=>'ProfileImages'])->getSecurePath();
     $user->update([
-      'profileImage' => $generated_name
+      'profileImage' => $url
     ]);
     return response()->json(['message' => 'Your profile picture updated successfully', 'user'=>$user, 'error' => false]);
+
+    // if ($user->profileImage) {
+    //   unlink(storage_path('app/public/ProfileImages/' . $user->profileImage));
+    // }
+    // $generated_name = time() . '.' . explode('/', explode(':', substr($request['profileImage'], 0, strpos($request['profileImage'], ';')))[1])[1];
+
+    // $manager = new ImageManager(new Driver());
+    // $manager->read($request['profileImage'])->save(storage_path('app/public/ProfileImages/' . $generated_name));
+    // $user->update([
+    //   'profileImage' => $generated_name
+    // ]);
+    // return response()->json(['message' => 'Your profile picture updated successfully', 'user'=>$user, 'error' => false]);
   }
 
   //Updating a user's about information
