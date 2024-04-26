@@ -151,30 +151,30 @@ $mail=new PortfolioMail($user);
       return response()->json(['message' => 'User not found', 'error' => true], 404);
     }
 
-  //  // Ensure the directory exists
-  //   $directory = storage_path('app/public/ProfileImages');
-  //   if (!file_exists($directory)) {
-  //       // Create the directory if it doesn't exist
-  //       mkdir($directory, 0777, true);
-  //   }
+     if ($user->profileImage) {
 
-$url=Cloudinary::upload($request->input('profileImage'),['folder'=>'ProfileImages'])->getSecurePath();
+        $path = parse_url($user->profileImage, PHP_URL_PATH);
+
+    // Extract the filename from the path
+    $filename = basename($path);
+
+    // Perform a search query to retrieve the image's public ID
+    $searchResponse = Cloudinary::search()->expression("filename:$filename")->execute();
+    if ($searchResponse['total_count'] > 0) {
+        $publicId = $searchResponse['resources'][0]['public_id'];
+
+        // Delete the image using its public ID
+      Cloudinary::destroy($publicId);
+    }
+    }
+        // Update the profile Image
+$url=Cloudinary::upload($request->input('profileImage'),['folder'=>'ProfileImages','width' => 500,
+    'height' => 500,])->getSecurePath();
     $user->update([
       'profileImage' => $url
     ]);
     return response()->json(['message' => 'Your profile picture updated successfully', 'user'=>$user, 'error' => false]);
 
-    // if ($user->profileImage) {
-    //   unlink(storage_path('app/public/ProfileImages/' . $user->profileImage));
-    // }
-    // $generated_name = time() . '.' . explode('/', explode(':', substr($request['profileImage'], 0, strpos($request['profileImage'], ';')))[1])[1];
-
-    // $manager = new ImageManager(new Driver());
-    // $manager->read($request['profileImage'])->save(storage_path('app/public/ProfileImages/' . $generated_name));
-    // $user->update([
-    //   'profileImage' => $generated_name
-    // ]);
-    // return response()->json(['message' => 'Your profile picture updated successfully', 'user'=>$user, 'error' => false]);
   }
 
   //Updating a user's about information
@@ -200,12 +200,29 @@ $url=Cloudinary::upload($request->input('profileImage'),['folder'=>'ProfileImage
       return response()->json(['message' => 'User not found', 'error' => true], 404);
     }
     if ($user->cv_URL) {
-      unlink(storage_path('app/public/cv/' . $user->cv_URL));
+          $path = parse_url($user->cv_URL, PHP_URL_PATH);
+
+    // Extract the filename from the path
+    $filename = basename($path);
+
+    // Perform a search query to retrieve the image's public ID
+    $searchResponse = Cloudinary::search()->expression("filename:$filename")->execute();
+    if ($searchResponse['total_count'] > 0) {
+        $publicId = $searchResponse['resources'][0]['public_id'];
+
+        // Delete the image using its public ID
+      Cloudinary::destroy($publicId);
     }
-    $generated_name = time() . '.' . $request->myCV->getClientOriginalExtension();
-    $request->myCV->move(storage_path('app/public/cv/'), $generated_name);
+    }
+        // Update the profile Image
+$url=Cloudinary::uploadFile($request->file('myCV')->getRealPath(),['folder'=>'CVs'])->getSecurePath();
+    // $user->update([
+    //   'profileImage' => $url
+    // ]);
+    // $generated_name = time() . '.' . $request->myCV->getClientOriginalExtension();
+    // $request->myCV->move(storage_path('app/public/cv/'), $generated_name);
     $user->update([
-      'cv_URL' => $generated_name
+      'cv_URL' => $url
     ]);
     return response()->json(['message' => 'Your CV updated successfully', 'error' => false]);
   }

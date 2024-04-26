@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 // require './vendor/autoload.php';
 
 use App\Models\Project;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -20,19 +21,16 @@ class ProjectController extends Controller
     return response()->json(['message' => 'You have a project named '.$project['title'].' already', 'error' => true]);
    }else{
     if ($project['image']) {
-     $generated_name = Str::random(7) . '.' . explode('/', explode(':', substr($project['image'], 0, strpos($project['image'], ';')))[1])[1];
-
-    $manager=new ImageManager(new Driver());
-    $manager->read($project['image'])->save(storage_path('app/public/projectImages/'.$generated_name));
+   $url=Cloudinary::upload($project['image'],['folder'=>'ProjectImages'])->getSecurePath();
    }else{
-   $generated_name=null;
+   $url=null;
    }
 
         Project::create([
         'user_token'=>$user->info_token,
         'title'=>$project['title'],
         'category'=>$project['category'],
-        'image'=>$generated_name,
+        'image'=>$url,
         'web_link'=>$project['web_link'],
         'github_link'=>$project['github_link'],
         'description'=>$project['description'],
@@ -66,22 +64,31 @@ if (!$information) {
     }
 
        if ($project['image'] && strpos($result['image'], 'base64') !== false) {
-      unlink(storage_path('app/public/projectImages/'. $project['image']));
+            $path = parse_url($project['image'], PHP_URL_PATH);
+
+    // Extract the filename from the path
+    $filename = basename($path);
+
+    // Perform a search query to retrieve the image's public ID
+    $searchResponse = Cloudinary::search()->expression("filename:$filename")->execute();
+    if ($searchResponse['total_count'] > 0) {
+        $publicId = $searchResponse['resources'][0]['public_id'];
+
+        // Delete the image using its public ID
+      Cloudinary::destroy($publicId);
+    }
     }
 
      if ($result['image'] && strpos($result['image'], 'base64') !== false) {
-     $generated_name = Str::random(7) . '.' . explode('/', explode(':', substr($result['image'], 0, strpos($result['image'], ';')))[1])[1];
-
-    $manager=new ImageManager(new Driver());
-    $manager->read($result['image'])->save(storage_path('app/public/projectImages/'.$generated_name));
+   $url=Cloudinary::upload($result['image'],['folder'=>'ProjectImages'])->getSecurePath();
    }else{
-   $generated_name=$result['image'];
+   $url=$result['image'];
    }
 
     Project::where('id',$result['id'])->update([
         'title'=>$result['title'],
         'category'=>$result['category'],
-        'image'=>$generated_name,
+        'image'=>$url,
         'web_link'=>$result['web_link'],
         'github_link'=>$result['github_link'],
         'description'=>$result['description'],
