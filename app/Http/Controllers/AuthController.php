@@ -158,7 +158,7 @@ $mail=new PortfolioMail($user);
   //       mkdir($directory, 0777, true);
   //   }
 
-$url=Cloudinary::upload($request['profileImage']->getRealPath(),['folder'=>'ProfileImages'])->getSecurePath();
+$url=Cloudinary::upload($request->input('profileImage'),['folder'=>'ProfileImages'])->getSecurePath();
     $user->update([
       'profileImage' => $url
     ]);
