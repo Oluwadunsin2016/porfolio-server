@@ -12,6 +12,10 @@ class DownloadController extends Controller
   $filePath=$user->cv_URL;
   $filename='my_cv.pdf';
 
+
+ if (!$filePath) {
+      return response()->json(['message' => 'The user has no CV yet', 'error' => true], 404);
+    }
      // Fetch the PDF file content from the Cloudinary URL
     $response = Http::get($filePath);
 
