@@ -60,7 +60,7 @@ if (!$information) {
    $result = json_decode($request->input(['project']),true) ;
   $project=Project::where('id',$result['id'])->first();
     if (!$project) {
-      return response()->json(['message' => 'project not found', 'error' => true], 404);
+      return response()->json(['message' => 'project not found', 'error' => true]);
     }
 
        if ($project['image'] && strpos($result['image'], 'base64') !== false) {

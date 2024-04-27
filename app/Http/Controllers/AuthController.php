@@ -182,7 +182,7 @@ $url=Cloudinary::upload($request->input('profileImage'),['folder'=>'ProfileImage
   {
     $user = $request->user();
     if (!$user) {
-      return response()->json(['message' => 'User not found', 'error' => true], 404);
+      return response()->json(['message' => 'User not found', 'error' => true]);
     }
 
     $user->update([
@@ -197,7 +197,7 @@ $url=Cloudinary::upload($request->input('profileImage'),['folder'=>'ProfileImage
   {
     $user = $request->user();
     if (!$user) {
-      return response()->json(['message' => 'User not found', 'error' => true], 404);
+      return response()->json(['message' => 'User not found', 'error' => true]);
     }
     if ($user->cv_URL) {
           $path = parse_url($user->cv_URL, PHP_URL_PATH);
@@ -288,7 +288,7 @@ $mail=new ForgottenPassword($information);
 
         return response()->json(['message' => 'Some codes have been sent to your email','error'=>false],200);
    } else {
-        return response()->json(['message' => "You don't have an account",'error'=>true],404);
+        return response()->json(['message' => "You don't have an account",'error'=>true]);
    }
    
     }
