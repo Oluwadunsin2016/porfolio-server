@@ -34,7 +34,9 @@ if (!$information) {
 // Updating social information
    public function updateSocialInformation(Request $request){
    $user=$request->user();
-   SocialInformation::where('user_token',$user['info_token'])->update([
+   $information=SocialInformation::where('user_token',$user['info_token'])->first();
+   if ($information) {
+    $information->update([
    'whatsapp'=>$request['whatsapp'],
    'facebook'=>$request['facebook'],
    'instagram'=>$request['instagram'],
@@ -43,5 +45,9 @@ if (!$information) {
    'telegram'=>$request['telegram'],
    ]);
    return response()->json(['message' => 'Social information updated successfully', 'error' => false]);
+   } else {
+   return response()->json(['message' => "You don't have any work information saved", 'error' => true]);
+   }
+   
    }
 }

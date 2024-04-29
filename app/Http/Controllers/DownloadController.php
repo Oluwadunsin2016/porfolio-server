@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Response;
 
 class DownloadController extends Controller
 {
