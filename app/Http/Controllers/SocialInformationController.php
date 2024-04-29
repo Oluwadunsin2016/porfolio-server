@@ -26,7 +26,7 @@ class SocialInformationController extends Controller
   {
 $information=SocialInformation::where('user_token',$token)->first();
 if (!$information) {
-   return response()->json(['message' =>'User has no work information', 'error' => true]);
+   return response()->json(['message' =>'User has no social information', 'error' => true]);
 }
    return response()->json($information);
   }
@@ -46,7 +46,7 @@ if (!$information) {
    ]);
    return response()->json(['message' => 'Social information updated successfully', 'error' => false]);
    } else {
-   return response()->json(['message' => "You don't have any work information saved", 'error' => true]);
+   return response()->json(['message' => "You don't have any social information saved already", 'error' => true]);
    }
    
    }
