@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Response;
 
 class DownloadController extends Controller
 {
@@ -25,9 +26,13 @@ class DownloadController extends Controller
     }
 
     // Set the appropriate headers for the file download
-    return response($response->body())
-        ->header('Content-Type', 'application/pdf')
-        ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    // return response($response->body())
+    //     ->header('Content-Type', 'application/pdf')
+    //     ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    $headers = [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'attachment; filename="my_cv.pdf"',
+    ];
+return Response::make($response->body(), 200, $headers);
   }
-
 }
