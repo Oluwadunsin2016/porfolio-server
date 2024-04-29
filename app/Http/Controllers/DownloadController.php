@@ -29,10 +29,17 @@ class DownloadController extends Controller
     // return response($response->body())
     //     ->header('Content-Type', 'application/pdf')
     //     ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    // $headers = [
+    //     'Content-Type' => 'application/pdf',
+    //     'Content-Disposition' => 'attachment; filename="my_cv.pdf"',
+    // ];
     $headers = [
-        'Content-Type' => 'application/pdf',
         'Content-Disposition' => 'attachment; filename="my_cv.pdf"',
+        'Content-Length' => strlen($response->body()), // Set Content-Length header
+        'Pragma' => 'public', // Set Pragma header
     ];
+
+    
 return Response::make($response->body(), 200, $headers);
   }
 }
