@@ -151,7 +151,8 @@ Verify Email Address
       <h4 class="greeting">Hello {{$user['firstName']}}!</h4>
      <p>Click the button below to verify your email address.</p>
       <div class="button_container"> 
-      <a href={{'http://localhost:5174/verify/'.$user['remember_token']}} >Verify Email Address</a>
+      {{-- <a href={{'http://localhost:5174/verify/'.$user['remember_token']}} >Verify Email Address</a> --}}
+      <a href={{'https://portfolio-upload-plum.vercel.app/verify/'.$user['remember_token']}} >Verify Email Address</a>
       </div>
       <p>If you did not create an account, no further action is required</p>
 
