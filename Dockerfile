@@ -2,7 +2,9 @@
 FROM php:8.1-apache
 
 # Install necessary PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql
+RUN apt-get update && apt-get install -y libzip-dev zip \
+    && docker-php-ext-install pdo pdo_mysql mbstring bcmath zip
+
 
 # Set working directory
 WORKDIR /var/www/html
@@ -12,7 +14,8 @@ COPY . .
 
 # Install Composer and dependencies
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer install --optimize-autoloader --no-dev
+ENV COMPOSER_MEMORY_LIMIT=-1
+RUN composer clear-cache && composer install --optimize-autoloader --no-dev -vvv
 
 # Expose port 80
 EXPOSE 80
