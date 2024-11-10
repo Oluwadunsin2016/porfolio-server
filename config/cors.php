@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:5173','http://localhost:5174', 'https://portfolio-upload-plum.vercel.app', 'https://portfolio-upload-plum.vercel.app/{token}', 'https://vue-portfolio-alpha-three.vercel.app/{token}', 'https://porfolio-server-dnqn.onrender.com'],
+    'allowed_origins' => ['http://localhost:5173','http://localhost:5174', 'https://portfolio-upload-plum.vercel.app', 'https://vue-portfolio-alpha-three.vercel.app', 'https://porfolio-server-dnqn.onrender.com'],
 
     'allowed_origins_patterns' => [],
 
