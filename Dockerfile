@@ -25,4 +25,5 @@ RUN composer clear-cache && composer install --optimize-autoloader --no-dev -vvv
 EXPOSE 80
 
 # Start Apache server
-CMD ["apache2-foreground"]
+# CMD ["apache2-foreground"]
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
