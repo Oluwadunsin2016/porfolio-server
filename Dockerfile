@@ -2,8 +2,12 @@
 FROM php:8.1-apache
 
 # Install necessary PHP extensions
-RUN apt-get update && apt-get install -y libzip-dev zip \
-    && docker-php-ext-install pdo pdo_mysql mbstring bcmath zip
+RUN apt-get update && \
+    apt-get install -y \
+    libzip-dev \
+    zip \
+    libonig-dev && \
+    docker-php-ext-install pdo pdo_mysql mbstring bcmath zip
 
 
 # Set working directory
